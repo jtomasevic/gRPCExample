@@ -1,0 +1,51 @@
+syntax = "proto3";
+package users;
+option go_package = "services/users/service";
+// import "google/protobuf/timestamp.proto";
+
+// import "google/api/annotations.proto";
+
+message SignupRequset {
+    string email = 1;
+    string password = 2;
+}
+
+message SignupResponse {
+    bool isOk = 1;
+    string error = 2;
+    string id = 3;
+}
+
+message User {
+    string id = 1;
+    string email = 2;
+    string firstName = 3;
+	string lastName = 4;
+	int32 numberOfTasks =5;
+}
+
+message GetAllUsersRequest {
+}
+
+// Contains list of all tasks
+message ReadAllUsersResponse{
+    // List of all tasks
+    repeated User users = 1;
+}
+
+message AddTaskRequest {
+    string userId = 1;
+    string taskId = 2;
+}
+
+message AddTaskResponse {
+    string userName = 1;
+    int32 hasTasks = 2;
+    string lastTaskAddedId = 3;
+}
+
+service UserService {
+    rpc Signup(SignupRequset) returns (SignupResponse);
+    rpc All(GetAllUsersRequest) returns (ReadAllUsersResponse);
+    rpc AddTask(AddTaskRequest) returns (AddTaskResponse);
+}

@@ -1,0 +1,167 @@
+syntax = "proto3";
+package facade;
+option go_package = "services/facade/service";
+import "google/api/annotations.proto";
+
+message SignupRequset {
+    string email = 1;
+    string password = 2;
+}
+
+message SignupResponse {
+    bool isOk = 1;
+    string error = 2;
+    string id = 3;
+}
+
+message User {
+    string id = 1;
+    string email = 2;
+    string firstName = 3;
+	string lastName = 4;
+	int32 numberOfTasks =5;
+}
+
+message GetAllUsersRequest {
+}
+
+// Contains list of all tasks
+message GetAlllUsersResponse{
+    // List of all tasks
+    repeated User users = 1;
+}
+
+
+// Taks we have to do
+message Task {
+    // Unique integer identifier of the  task
+    string id = 1;
+
+    // Title of the task
+    string title = 2;
+
+    // Detail description of the task
+    string description = 3;
+
+    string userId = 5;
+}
+
+// Request data to create new task
+message CreateRequest{
+    // Task entity to add
+    Task task = 1;
+}
+
+// Contains data of created task
+message CreateResponse{
+    // ID of created task
+    string id = 1;
+}
+
+// Request data to read task
+message ReadRequest{
+    // Unique integer identifier of the task
+    string id = 1;
+}
+
+// Contains task data specified in by ID request
+message ReadResponse{
+    // Task entity read by ID
+    Task task = 1;
+}
+
+// Request data to update task
+message UpdateRequest{
+    // Task entity to update
+    Task task = 1;
+}
+
+// Contains status of update operation
+message UpdateResponse{
+    // Contains number of entities have beed updated
+    // Equals 1 in case of succesfull update
+    int64 updated = 1;
+}
+
+// Request data to delete task
+message DeleteRequest{
+    // Unique integer identifier of the task to delete
+    string id = 1;
+}
+
+// Contains status of delete operation
+message DeleteResponse{
+    // Contains number of entities have beed deleted
+    // Equals 1 in case of succesfull delete
+    int64 deleted = 1;
+}
+
+// Request data to read all task
+message ReadAllRequest{
+    // API versioning: it is my best practice to specify version explicitly
+    string api = 1;
+}
+
+// Contains list of all tasks
+message ReadAllResponse{
+    // List of all tasks
+    repeated Task task = 1;
+}
+
+
+service FacadeService {
+    rpc Signup(SignupRequset) returns (SignupResponse) {
+        option (google.api.http) = {
+            post: "/user/signup"
+            body: "*"
+        };
+    }
+    rpc AllUsers(GetAllUsersRequest) returns (GetAlllUsersResponse) {
+        option (google.api.http) = {
+            get: "/users"
+        };
+    }
+
+    // Create new task
+    rpc CreateTask(CreateRequest) returns (CreateResponse){
+        option (google.api.http) = {
+            post: "/task"
+            body: "*"
+        };
+    }
+
+    // Read task
+    rpc GetTaskById(ReadRequest) returns (ReadResponse){
+        option (google.api.http) = {
+            get: "/task/{id}"
+        };
+    }
+
+    // Update task
+    rpc UpdateTask(UpdateRequest) returns (UpdateResponse){
+        option (google.api.http) = {
+            put: "/task/{task.id}"
+            body: "*"
+
+            additional_bindings {
+                patch: "/task/{task.id}"
+                body: "*"
+            }
+        };
+    }
+
+    // Delete task
+    rpc DeleteTask(DeleteRequest) returns (DeleteResponse){
+        option (google.api.http) = {
+            delete: "/task/{id}"
+        };
+    }
+
+    // Read all tasks
+    rpc ReadAllTasks(ReadAllRequest) returns (ReadAllResponse) {
+        option (google.api.http) = {
+            get: "/tasks"
+        };
+    }
+
+}
